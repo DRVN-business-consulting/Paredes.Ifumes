@@ -1,20 +1,49 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { SafeAreaView, StatusBar, StyleSheet } from 'react-native';
+import { ThemeProvider, useTheme } from './src/theme/ThemeContext';
+import MusicList from './src/components/MusicList';
+import MusicPlayer from './src/components/MusicPlayer';
 
-export default function App() {
+const App = () => {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <ThemeProvider>
+      <Main />
+    </ThemeProvider>
   );
-}
+};
+
+const Main = () => {
+  const [selectedSong, setSelectedSong] = useState(null);
+  const { theme } = useTheme();
+
+  const handleSongSelect = (song) => {
+    setSelectedSong(song);
+  };
+
+  const handleBack = () => {
+    setSelectedSong(null);
+  };
+
+  return (
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
+      <StatusBar barStyle={theme.text === '#fff' ? 'light-content' : 'dark-content'} />
+      {selectedSong ? (
+        <MusicPlayer 
+          songName={selectedSong.title}
+          songDuration={180} // Replace this with actual duration if available
+          onGoBack={handleBack} 
+        />
+      ) : (
+        <MusicList onSongSelect={handleSongSelect} />
+      )}
+    </SafeAreaView>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 });
+
+export default App;
